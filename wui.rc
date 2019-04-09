@@ -1,0 +1,30 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "wui_res.h"
+
+//#include "windows.h"
+
+LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
+
+IDD_INPUT_BOX DIALOGEX 0, 0, 311, 54
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "ОК",IDOK,199,33,50,14
+    PUSHBUTTON      "Отмена",IDCANCEL,254,33,50,14
+    LTEXT           "Статический",IDC_PROMPT,7,7,146,40
+    EDITTEXT        IDC_TEXT,167,7,137,12,ES_AUTOHSCROLL
+END
+/*
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_INPUT_BOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 304
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 47
+    END
+END
+*/

@@ -29,6 +29,7 @@ class CWindowWrapper
         
         void Enable (const BOOL bEnabled = TRUE);
         int GetText (char *pchBuffer, const int nSize);
+        int GetTextLength ();
         void SetText (const char *pszString);
         
         inline HWND GetHandle () { return m_hwndHandle; }

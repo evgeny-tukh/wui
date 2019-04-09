@@ -279,6 +279,11 @@ void CWindowWrapper::Enable (const BOOL bEnabled)
     ::EnableWindow (m_hwndHandle, bEnabled);
 }
 
+int CWindowWrapper::GetTextLength()
+{
+    return (int) SendMessage (WM_GETTEXTLENGTH);
+}
+
 int CWindowWrapper::GetText (char *pchBuffer, const int nSize)
 {
     return GetWindowText (m_hwndHandle, pchBuffer, nSize);
