@@ -32,6 +32,7 @@ class CWindowWrapper
         int GetTextLength ();
         void SetText (const char *pszString);
         
+        inline HINSTANCE GetInstanceHandle () { return m_hInstance; }
         inline HWND GetHandle () { return m_hwndHandle; }
         inline BOOL GetClientRect (RECT *pRect) { return ::GetClientRect (m_hwndHandle, pRect); }
         inline BOOL GetWindowRect (RECT *pRect) { return ::GetWindowRect (m_hwndHandle, pRect); }
@@ -92,6 +93,7 @@ class CWindowWrapper
         virtual LRESULT OnSize (const DWORD dwRequestType, const WORD wWidth, const WORD wHeight);
         virtual LRESULT OnNotify (NMHDR *pHeader);
         virtual LRESULT OnTimer (UINT uiTimerID);
+        virtual LRESULT OnPaint ();
         
     private:
         static CWindowWrapper *m_pInstances [MAX_INSTANCES];

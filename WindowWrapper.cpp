@@ -161,7 +161,10 @@ LRESULT CWindowWrapper::OnMessage (UINT uiMessage, WPARAM wParam, LPARAM lParam)
             lResult = OnSysCommand (wParam, lParam); break;
             
         case WM_TIMER:
-            lResult = OnTimer(wParam); break;
+            lResult = OnTimer (wParam); break;
+
+        case WM_PAINT:
+            lResult = OnPaint (); break;
 
         case WM_DESTROY:
             OnDestroy ();
@@ -181,6 +184,11 @@ LRESULT CWindowWrapper::OnNotify (NMHDR *pHeader)
 }
 
 LRESULT CWindowWrapper::OnSize (const DWORD dwRequestType, const WORD wX, const WORD wY)
+{
+    return TRUE;
+}
+
+LRESULT CWindowWrapper::OnPaint ()
 {
     return TRUE;
 }
