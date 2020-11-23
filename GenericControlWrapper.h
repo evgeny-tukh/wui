@@ -17,5 +17,5 @@ class CGenericControlWrapper : public CWindowWrapper
         BOOL CreateControl (const int nX, const int nY, const int nWidth, const int nHeight, const UINT uiControlStyle = 0, const char *pszText = "");
         
     protected:
-        UINT m_uiControlID;
+        LONG_PTR m_uiControlID;
 };

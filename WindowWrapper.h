@@ -1,5 +1,8 @@
 #pragma once
 
+#include <Windows.h>
+#include <vector>
+
 class CWindowWrapper;
 
 #define MAX_INSTANCES   100
@@ -14,7 +17,7 @@ class CWindowWrapper
                         const char *pszIcon   = IDI_APPLICATION,
                         const char *pszCursor = IDC_ARROW,
                         const UINT  uiBrush   = WHITE_BRUSH);
-        CWindowWrapper (HWND hwndParent, UINT uiControlID);
+        CWindowWrapper (HWND hwndParent, UINT_PTR uiControlID);
         virtual ~CWindowWrapper ();
         
         static void MessageLoop ();
@@ -85,7 +88,7 @@ class CWindowWrapper
                             
         static LRESULT CALLBACK WindowProc (HWND hwndHandle, UINT uiMessage, WPARAM wParam, LPARAM lParam);
 
-        virtual LRESULT OnCreate (CREATESTRUCT *pData);
+        virtual void OnCreate ();
         virtual LRESULT OnDestroy ();
         virtual LRESULT OnMessage (UINT uiMessage, WPARAM wParam, LPARAM lParam);
         virtual LRESULT OnCommand (WPARAM wParam, LPARAM lParam);
@@ -96,8 +99,7 @@ class CWindowWrapper
         virtual LRESULT OnPaint ();
         
     private:
-        static CWindowWrapper *m_pInstances [MAX_INSTANCES];
-        static int             m_nInstCount;
+        static std::vector<CWindowWrapper *> m_arrInstances;
         
         static void AddInstance (CWindowWrapper *pInstance);
         static void RemoveInstance (HWND hwndHandle);

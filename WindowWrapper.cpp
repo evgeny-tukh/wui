@@ -1,14 +1,12 @@
 #include <StdLib.h>
 #include <Windows.h>
+#include <WinUser.h>
 #include "WindowWrapper.h"
 
-CWindowWrapper *CWindowWrapper::m_pInstances [MAX_INSTANCES];
-int             CWindowWrapper::m_nInstCount = 0;
+std::vector<CWindowWrapper *> CWindowWrapper::m_arrInstances;
 
 CWindowWrapper::CWindowWrapper (HINSTANCE hInstance, HWND hwndParent, const char *pszClassName, HMENU hmnuMenu, const char *pszIcon, const char *pszCursor, const UINT uiBrush)
 {    
-    AddInstance (this);
-    
     if (pszClassName != NULL)
         strncpy (m_chClassName, pszClassName, sizeof (m_chClassName));
 
@@ -24,7 +22,7 @@ CWindowWrapper::CWindowWrapper (HINSTANCE hInstance, HWND hwndParent, const char
     m_aClass       = pszClassName ? RegisterClass () : 0;
 }
 
-CWindowWrapper::CWindowWrapper (HWND hwndParent, UINT uiControlID)
+CWindowWrapper::CWindowWrapper (HWND hwndParent, UINT_PTR uiControlID)
 {
     memset (m_chClassName, 0, sizeof (m_chClassName));
 
@@ -85,6 +83,36 @@ BOOL CWindowWrapper::RegisterClass ()
                     
 LRESULT CALLBACK CWindowWrapper::WindowProc (HWND hwndHandle, UINT uiMessage, WPARAM wParam, LPARAM lParam)
 {
+    #if 1
+    CWindowWrapper *pInstance;
+
+    if (uiMessage == WM_CREATE)
+    {
+        CREATESTRUCT *pData = (CREATESTRUCT *) lParam;
+        
+        pInstance = (CWindowWrapper *) pData->lpCreateParams;
+
+        pInstance->m_hwndHandle = hwndHandle;
+
+        AddInstance (pInstance);
+        pInstance->OnCreate ();
+    }
+    else if (uiMessage == WM_INITDIALOG)
+    {
+        pInstance = (CWindowWrapper *) lParam;
+
+        pInstance->m_hwndHandle = hwndHandle;
+
+        AddInstance (pInstance);
+    }
+    else
+    {
+        pInstance = FindInstance (hwndHandle);
+    }
+
+    //return DefWindowProc (hwndHandle, uiMessage, wParam, lParam);
+    return (pInstance == NULL) ? DefWindowProc (hwndHandle, uiMessage, wParam, lParam) : pInstance->OnMessage (uiMessage, wParam, lParam);
+    #else
     CWindowWrapper *pInstance;
 
     if (uiMessage == WM_CREATE)
@@ -104,24 +132,25 @@ LRESULT CALLBACK CWindowWrapper::WindowProc (HWND hwndHandle, UINT uiMessage, WP
     pInstance = FindInstance (hwndHandle);
 
     if (pInstance == NULL)
-        pInstance = (CWindowWrapper *) GetWindowLong (hwndHandle, GWL_USERDATA);
+        pInstance = (CWindowWrapper *) GetWindowLongPtr (hwndHandle, GWLP_USERDATA);
 
     if (pInstance == NULL)
     {
-        if (GetWindowLong (hwndHandle, DWL_DLGPROC) != NULL)
+        if (GetWindowLongPtr (hwndHandle, DWLP_DLGPROC) != NULL)
             return uiMessage == WM_INITDIALOG;
         else
             return DefWindowProc (hwndHandle, uiMessage, wParam, lParam);
     }
 
-    if (pInstance == NULL && m_nInstCount > 0)
+    if (pInstance == NULL && m_arrInstances.size () > 0)
     {
-        pInstance = m_pInstances [m_nInstCount-1];
+        pInstance = m_arrInstances.back ();
         
         pInstance->m_hwndHandle = hwndHandle;
     }
     
     return (pInstance == NULL) ? 0 : pInstance->OnMessage (uiMessage, wParam, lParam);
+    #endif
 }
 
 BOOL CWindowWrapper::Create (const char *pszText, const int nX, const int nY, const int nWidth, const int nHeight, const UINT uiStyle)
@@ -145,9 +174,6 @@ LRESULT CWindowWrapper::OnMessage (UINT uiMessage, WPARAM wParam, LPARAM lParam)
     
     switch (uiMessage)
     {
-        case WM_CREATE:
-            lResult = OnCreate ((CREATESTRUCT *) lParam); break;
-            
         case WM_NOTIFY:
             lResult = OnNotify ((NMHDR *) lParam); break;
             
@@ -190,7 +216,7 @@ LRESULT CWindowWrapper::OnSize (const DWORD dwRequestType, const WORD wX, const 
 
 LRESULT CWindowWrapper::OnPaint ()
 {
-    return TRUE;
+    return DefWindowProc (m_hwndHandle, WM_PAINT, 0, 0);
 }
 
 LRESULT CWindowWrapper::OnDestroy ()
@@ -203,9 +229,8 @@ LRESULT CWindowWrapper::OnCommand (WPARAM wParam, LPARAM lParam)
     return TRUE;
 }
 
-LRESULT CWindowWrapper::OnCreate (CREATESTRUCT *pData)
+void CWindowWrapper::OnCreate ()
 {
-    return FALSE;
 }
 
 LRESULT CWindowWrapper::OnTimer (UINT uiTimerID)
@@ -220,42 +245,33 @@ LRESULT CWindowWrapper::OnSysCommand (WPARAM wParam, LPARAM lParam)
 
 void CWindowWrapper::AddInstance (CWindowWrapper *pInstance)
 {
-    m_pInstances [m_nInstCount++] = pInstance;
+    m_arrInstances.push_back (pInstance);
 }
 
 void CWindowWrapper::RemoveInstance (HWND hwndHandle)
 {
-    int             nIndex    = 0;
-    CWindowWrapper *pInstance = FindInstance (hwndHandle, & nIndex);
-    
-    if (pInstance)
+    for (auto instance = m_arrInstances.begin (); instance != m_arrInstances.end (); ++ instance)
     {
-        if (m_nInstCount - nIndex > 1)
-            memmove (m_pInstances + nIndex, m_pInstances + (nIndex + 1), sizeof (CWindowWrapper *) * (m_nInstCount - nIndex - 1));
-
-        -- m_nInstCount;
+        if ((*instance)->m_hwndHandle == hwndHandle)
+        {
+            m_arrInstances.erase (instance); break;
+        }
     }
 }
 
 CWindowWrapper *CWindowWrapper::FindInstance (HWND hwndHandle, int *pnIndex)
 {
-    CWindowWrapper *pResult;
-    int             i;
-    
-    for (i = 0, pResult = NULL; i < m_nInstCount; ++ i)
+    for (auto instance = m_arrInstances.begin (); instance != m_arrInstances.end (); ++ instance)
     {
-        if (m_pInstances [i]->m_hwndHandle == hwndHandle)
+        if ((*instance)->m_hwndHandle == hwndHandle)
         {
-            pResult = m_pInstances [i];
-            
-            if (pnIndex != NULL)
-                *pnIndex = i;
-                
-            break;
+            if (pnIndex) *pnIndex = instance - m_arrInstances.begin ();
+
+            return *instance;
         }
     }
     
-    return pResult;
+    return 0;
 }
 
 int CWindowWrapper::MessageBox (const char *pszText, const char *pszCaption, UINT uiType)
@@ -308,13 +324,11 @@ BOOL CWindowWrapper::IsDialogMessage (MSG *pMessage)
     CWindowWrapper *pInstance;
     int             i;
 
-    for (i = 0, bResult = FALSE; i < m_nInstCount && !bResult ; ++ i)
+    for (auto instance = m_arrInstances.begin (); instance != m_arrInstances.end (); ++ instance)
     {
-        pInstance = m_pInstances [i];
-
-        if (pInstance->IsDialogBox () && ::IsDialogMessage (pInstance->GetHandle (), pMessage))
-            bResult = TRUE;
+        if ((*instance)->IsDialogBox () && ::IsDialogMessage ((*instance)->GetHandle (), pMessage))
+            return TRUE;
     }
 
-    return bResult;
+    return FALSE;
 }

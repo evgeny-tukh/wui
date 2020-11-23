@@ -23,7 +23,7 @@ INT_PTR CALLBACK ModelessDialogProc (HWND hwndHandle, UINT uiMessage, WPARAM wPa
     return uiMessage == WM_INITDIALOG;
 }
 
-BOOL CALLBACK CDialogWrapper::DialogProc (HWND hwndHandle, UINT uiMessage, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK CDialogWrapper::DialogProc (HWND hwndHandle, UINT uiMessage, WPARAM wParam, LPARAM lParam)
 {
     INT_PTR lResult = CWindowWrapper::WindowProc (hwndHandle, uiMessage, wParam, lParam);
 

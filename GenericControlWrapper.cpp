@@ -9,7 +9,7 @@ CGenericControlWrapper::CGenericControlWrapper (UINT uiControlID) : CWindowWrapp
 
 CGenericControlWrapper::CGenericControlWrapper (HWND hwndParent, UINT uiControlID) : CWindowWrapper (hwndParent, uiControlID)
 {
-    m_uiControlID = uiControlID == 0 ? (UINT) m_hmnuMenu : uiControlID;
+    m_uiControlID = uiControlID == 0 ? (LONG_PTR) m_hmnuMenu : uiControlID;
 }
 
 void CGenericControlWrapper::Attach (HWND hwndControl)
