@@ -14,7 +14,7 @@ class CGenericControlWrapper : public CWindowWrapper
         void Attach (HWND hwndControl);
         void FindAndAttach (HWND hwndParent);
         
-        BOOL CreateControl (const int nX, const int nY, const int nWidth, const int nHeight, const UINT uiControlStyle = 0, const char *pszText = "");
+        CGenericControlWrapper *CreateControl (const int nX, const int nY, const int nWidth, const int nHeight, const UINT uiControlStyle = 0, const char *pszText = "");
         
     protected:
         LONG_PTR m_uiControlID;

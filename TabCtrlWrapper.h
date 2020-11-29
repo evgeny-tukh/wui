@@ -9,4 +9,6 @@ class CTabCtrlWrapper : public CGenericControlWrapper
         CTabCtrlWrapper (HWND hwndParent, UINT uiControlID);
 
         int AddItem (char *pszText, LPARAM data);
+        int GetCurSel ();
+        LPARAM GetItemData (int item);
 };

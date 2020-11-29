@@ -24,7 +24,7 @@ void CGenericControlWrapper::FindAndAttach (HWND hwndParent)
     m_hwndHandle = ::GetDlgItem (hwndParent, m_uiControlID);
 }
 
-BOOL CGenericControlWrapper::CreateControl (const int nX, const int nY, const int nWidth, const int nHeight, const UINT uiControlStyle, const char *pszText)
+CGenericControlWrapper *CGenericControlWrapper::CreateControl (const int nX, const int nY, const int nWidth, const int nHeight, const UINT uiControlStyle, const char *pszText)
 {
     BOOL bResult;
     
@@ -38,6 +38,6 @@ BOOL CGenericControlWrapper::CreateControl (const int nX, const int nY, const in
         Update ();
     }
     
-    return bResult;
+    return bResult ? this : 0;
 }
 

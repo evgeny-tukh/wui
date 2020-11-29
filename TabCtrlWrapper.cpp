@@ -7,11 +7,27 @@ CTabCtrlWrapper::CTabCtrlWrapper (HWND hwndParent, UINT uiControlID) : CGenericC
 
 int CTabCtrlWrapper::AddItem (char *pszText, LPARAM data)
 {
-    TCITEMA item;
+    TCITEM item;
 
     item.mask = TCIF_PARAM | TCIF_TEXT;
     item.lParam = data;
     item.pszText = pszText;
 
     return SendMessage (TCM_INSERTITEM, 0xFFFF, (LPARAM) & item);
+}
+
+int CTabCtrlWrapper::GetCurSel ()
+{
+    return SendMessage (TCM_GETCURSEL, 0, 0);
+}
+
+LPARAM CTabCtrlWrapper::GetItemData (int index)
+{
+    TCITEM item;
+
+    item.mask = TCIF_PARAM;
+
+    SendMessage (TCM_GETITEM, index, (LPARAM) & item);
+
+    return item.lParam;
 }
