@@ -5,6 +5,11 @@ CTrackbarWrapper::CTrackbarWrapper (HWND hwndParent, UINT uiControlID) : CGeneri
     strcpy (m_chClassName, "msctls_trackbar32");
 }
 
+void CTrackbarWrapper::SetValue (LPARAM value)
+{
+    SendMessage (TBM_SETPOS, TRUE, value);
+}
+
 void CTrackbarWrapper::SetRange (LPARAM lpMin, LPARAM lpMax)
 {
     SendMessage (TBM_SETRANGEMIN, TRUE, lpMin);

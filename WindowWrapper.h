@@ -46,6 +46,11 @@ class CWindowWrapper
             ::MoveWindow (m_hwndHandle, nX, nY, nWidth, nHeight, bRepaint);
         }
 
+        inline void SetFocus ()
+        {
+            ::SetFocus (m_hwndHandle);
+        }
+
         inline UINT IsDlgButtonChecked (const int nIDButton)
         {
             return ::IsDlgButtonChecked (m_hwndHandle, nIDButton);

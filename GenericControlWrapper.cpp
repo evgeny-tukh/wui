@@ -30,7 +30,7 @@ CGenericControlWrapper *CGenericControlWrapper::CreateControl (const int nX, con
     
     //strncpy (m_chClassName, pszClassName, sizeof (m_chClassName));
     
-    bResult = CWindowWrapper::Create (pszText, nX, nY, nWidth, nHeight, WS_CHILD | WS_VISIBLE | uiControlStyle);
+    bResult = CWindowWrapper::Create (pszText, nX, nY, nWidth, nHeight, WS_CHILD | WS_VISIBLE | WS_TABSTOP | uiControlStyle);
     
     if (bResult)
     {

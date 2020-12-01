@@ -10,5 +10,6 @@ class CTabCtrlWrapper : public CGenericControlWrapper
 
         int AddItem (char *pszText, LPARAM data);
         int GetCurSel ();
+        void SetCurSel (int index);
         LPARAM GetItemData (int item);
 };

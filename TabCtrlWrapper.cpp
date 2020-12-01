@@ -21,6 +21,11 @@ int CTabCtrlWrapper::GetCurSel ()
     return SendMessage (TCM_GETCURSEL, 0, 0);
 }
 
+void CTabCtrlWrapper::SetCurSel (int index)
+{
+    SendMessage (TCM_SETCURSEL, index, 0);
+}
+
 LPARAM CTabCtrlWrapper::GetItemData (int index)
 {
     TCITEM item;

@@ -20,6 +20,7 @@ BOOL CInputBox::OnInitDialog (WPARAM wParam, LPARAM lParam)
     SetItemText (IDC_TEXT, buffer);
     SetItemText (IDC_PROMPT, prompt);
     SetText (title);
+    SetFocus ();
 
     return CDialogWrapper::OnInitDialog (wParam, lParam);
 }

@@ -9,5 +9,6 @@ class CTrackbarWrapper : public CGenericControlWrapper
         CTrackbarWrapper (HWND hwndParent, UINT uiControlID);
 
         void SetRange (LPARAM lpMin, LPARAM lpMax);
+        void SetValue (LPARAM value);
         LPARAM GetPos ();
 };
