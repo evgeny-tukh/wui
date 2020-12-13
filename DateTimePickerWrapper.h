@@ -13,4 +13,6 @@ class CDateTimePickerWrapper : public CGenericControlWrapper
 
         time_t GetTimestamp ();
         void SetTimestamp (time_t timestamp);
+
+        void SetFormat (char *format);
 };

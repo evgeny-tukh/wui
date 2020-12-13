@@ -60,3 +60,8 @@ void CDateTimePickerWrapper::SetTimestamp (time_t timestamp)
         SetTime (0);
     }
 }
+
+void CDateTimePickerWrapper::SetFormat (char *format)
+{
+    SendMessageA (DTM_SETFORMAT, 0, (LPARAM) format);
+}
